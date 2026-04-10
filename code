@@ -1,0 +1,104 @@
+building [icon: home, color: blue] {
+  building_id int pk
+  name string
+  address string
+  city string
+  type string
+  total_floors int
+  created_at timestamp
+}
+
+floor [icon: layers, color: blue] {
+  floor_id int pk
+  building_id int fk
+  floor_number int
+  label string
+}
+
+elevator_shaft [icon: arrow-up, color: purple] {
+  shaft_id int pk
+  building_id int fk
+  shaft_code string
+  min_floor int
+  max_floor int
+}
+
+elevator [icon: box, color: purple] {
+  elevator_id int pk
+  shaft_id int fk
+  building_id int fk
+  model string
+  capacity_kg int
+  manufacture_year int
+  current_status string
+}
+
+elevator_floor_service [icon: git-merge, color: orange] {
+  id int pk
+  elevator_id int fk
+  floor_id int fk
+}
+
+floor_request [icon: bell, color: red] {
+  request_id int pk
+  floor_id int fk
+  building_id int fk
+  direction string
+  status string
+  requested_at timestamp
+}
+
+ride_assignment [icon: link, color: red] {
+  assignment_id int pk
+  request_id int fk
+  elevator_id int fk
+  assigned_at timestamp
+  assignment_status string
+}
+
+ride_log [icon: file-text, color: green] {
+  ride_id int pk
+  assignment_id int fk
+  elevator_id int fk
+  pickup_floor_id int fk
+  dropoff_floor_id int fk
+  start_time timestamp
+  end_time timestamp
+  passenger_count int
+}
+
+elevator_status_log [icon: activity, color: orange] {
+  log_id int pk
+  elevator_id int fk
+  status string
+  current_floor int
+  recorded_at timestamp
+}
+
+maintenance_record [icon: tool, color: yellow] {
+  record_id int pk
+  elevator_id int fk
+  maintenance_type string
+  description string
+  performed_by string
+  start_time timestamp
+  end_time timestamp
+  outcome string
+}
+
+building.building_id < floor.building_id
+building.building_id < elevator_shaft.building_id
+building.building_id < elevator.building_id
+building.building_id < floor_request.building_id
+elevator_shaft.shaft_id - elevator.shaft_id
+elevator.elevator_id < elevator_floor_service.elevator_id
+floor.floor_id < elevator_floor_service.floor_id
+floor.floor_id < floor_request.floor_id
+floor_request.request_id - ride_assignment.request_id
+elevator.elevator_id < ride_assignment.elevator_id
+ride_assignment.assignment_id - ride_log.assignment_id
+elevator.elevator_id < ride_log.elevator_id
+floor.floor_id < ride_log.pickup_floor_id
+floor.floor_id < ride_log.dropoff_floor_id
+elevator.elevator_id < elevator_status_log.elevator_id
+elevator.elevator_id < maintenance_record.elevator_id
